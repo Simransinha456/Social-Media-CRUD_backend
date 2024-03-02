@@ -36,9 +36,8 @@ const mongoUrl = process.env.MONGO_URL;
     }
 })();
 
-
 app.use("/", loginroutes); 
-app.use("/", postRoutes);
+app.use("/", postRoutes); 
 
 app.listen(8000, () => {
     console.log("Server started on port 8000");

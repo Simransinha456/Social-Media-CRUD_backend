@@ -9,3 +9,23 @@ const UserSchema = new mongoose.Schema({
 
  const Auth = mongoose.model('Auth', UserSchema);
  export default Auth; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+//  $ * * *
+//  * $   *
+//  *   $ *
+//  * * * $
