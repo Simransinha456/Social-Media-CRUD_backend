@@ -1,6 +1,6 @@
 import express from 'express';
 import PostImage from '../models/Post.js';
-// import verifyToken from '../middleware/middleware.js'
+// import verifyToken from '../middleware/middleware.js' 
 
 const router = express.Router();
 
@@ -8,13 +8,18 @@ const router = express.Router();
 router.post('/post-images', async (req, res) => {
   try {
     const { imageUrl, caption, phoneNumber, email } = req.body;
+    //validation---
+    if (!imageUrl || !caption || !phoneNumber || !email) {
+      throw new Error("Required fields are missing");
+    }
+    
     const postImage = await PostImage.create({ imageUrl, caption, phoneNumber, email });
     // console.log(postImage)
     res.status(201).json(postImage);
   } catch (error) {
     res.status(500).json({ message: error.message });
-  } 
-}); 
+  }
+});
 
 // Route to get all post images -------------------
 router.get('/post-images', async (req, res) => {
@@ -71,7 +76,6 @@ router.delete('/post-images/:id', async (req, res) => {
   }
 });
 
-
 // Define a route to set a cookie ---------------------
 router.get('/setcookie', (req, res) => {
   res.cookie('mycookie', 'HelloWorld', { maxAge: 900000, httpOnly: true });
@@ -83,5 +87,5 @@ router.get('/getcookie', (req, res) => {
   res.send('Value of mycookie: ' + cookieValue);
 });
 
-export default router; 
+export default router;
 

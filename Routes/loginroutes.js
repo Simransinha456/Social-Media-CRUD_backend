@@ -27,7 +27,7 @@ routes.post('/register', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}); 
+});
 
 
 // User login--------------------------------------------------------------------------
@@ -38,41 +38,47 @@ routes.post('/login', async (req, res) => {
             throw new Error("Password is required");
         }
 
-        let userData = {} 
+        const userData = {};
         if (username) {
             userData.username = username;
         } else if (phoneNumber) {
+            if (phoneNumber.length !== 10) {
+                throw new Error("Phone number is incorrect");
+            }
             userData.phoneNumber = phoneNumber;
         } else if (email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                throw new Error("Email is incorrect"); 
+            } 
             userData.email = email;
-        }
-        else {
-            throw new Error("Username/Email/PhoneNumber them is required");
+        } else {
+            throw new Error("Username/Email/PhoneNumber is required");
         }
 
         const user = await User.findOne(userData);
         if (!user) {
-            throw new Error("User does not exists");
+            throw new Error("User does not exist");
         }
         const passwordMatch = bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             throw new Error("Password incorrect");
         }
+
         const token = jwt.sign({ userId: user._id }, 'your-secret-key', { //token generate hoga
             expiresIn: '1h',
         });
 
-        // cookie part added here----- 
-        res.cookie('token', 'token.value', { maxAge: 900000, httpOnly: true });
-        // console.log(user)
+        // cookie part added here-----  Set token as a cookie
+        res.cookie('token', token, { maxAge: 900000, httpOnly: true });
 
-        const jsonUser = user.toJSON() //password hide karna hai
+        const jsonUser = user.toJSON(); //password hide karna hai
         delete jsonUser.password;
         res.status(200).send({ user: jsonUser });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
-}); 
+});
 
 export default routes;
 
